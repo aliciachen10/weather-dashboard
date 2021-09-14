@@ -13,6 +13,26 @@ var newDiv = document.createElement("div") //where is this being used? confirm a
 var existingEntries = JSON.parse(localStorage.getItem("allEntries")) || [];
 var existingCity = []
 
+//use clear button to clear all local storage and all text areas 
+var clearBtn = document.getElementById('clear-button')
+clearBtn.addEventListener('click', function(event) {
+    localStorage.clear()
+    cityButtons.innerHTML = ""
+//     for (var i = 0; i < cityButtons.length; i++) {
+//         $(textAreas[i]).val("")
+//     }
+})
+
+// convert the user's input into a capitalized string of letters 
+function getFinalCity(city) {
+
+  const rawCity = city;
+  console.log("HERE'S THE RAW CITy>>" + rawCity)
+  const finalCity = rawCity.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+  return finalCity
+}
+
+//get city info 
 function getApi(city) {
 
     // console.log(city);
@@ -32,6 +52,9 @@ function getApi(city) {
     
     fetch(requestUrl)
     .then(function (response) {
+      if (response.status === 404) {
+        window.alert('please enter a valid city')
+      }
         return response.json();
     })
     .then(function (data) {
@@ -39,8 +62,13 @@ function getApi(city) {
         // console.log(data.weather['0'].icon)
         var newh2 = document.createElement("span");
         var newh3 = document.createElement("h3")
-        newh3.innerHTML = city
+
+        // const rawCity = city;
+        // const finalCity = rawCity.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+
+        newh3.innerHTML = getFinalCity(city)
         newh3.innerHTML += " (" + moment().format("l") + ")"
+        newh3.setAttribute('class', 'inline')
         daily.appendChild(newh3)
         daily.appendChild(newh2)
 
@@ -50,7 +78,7 @@ function getApi(city) {
         weatherImg.src = "https://openweathermap.org/img/wn/" + data.weather["0"].icon + "@2x.png";
         daily.appendChild(weatherImg);
 
-        newDiv.innerHTML = "<p>Temp: " + Math.round(data.main.temp - 273.15) + " *C</p>"
+        newDiv.innerHTML = "<p>Temp: " + Math.round((data.main.temp - 273.15) * (9/5) + 32) + " \xB0F</p>"
         newDiv.innerHTML += "<p>Wind: " + data.wind.speed + " MPH</p>"
         newDiv.innerHTML += "<p>Humidity: " + data.main.humidity + " %</p>"
 
@@ -61,6 +89,7 @@ function getApi(city) {
     })
 }
 
+//grab uv index and the rest of the five day forecast
 function getUVIndex(latitude, longitude, city) {
 
     var requestUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + latitude + '&lon=' + longitude + '&exclude=hourly,minutely,alerts&appid=' + apiKey
@@ -77,19 +106,22 @@ function getUVIndex(latitude, longitude, city) {
 
       let uvBtn = document.createElement("button");
       uvBtn.innerHTML = uvIndex;
+      uvBtn.disabled = true;
+      // uvBtn.setAttribute('disabled')
       newDiv.appendChild(uvBtn);
 
-      if (uvIndex <=2) { 
+      if (uvIndex <3) { 
         // uvBtn.setAttribute('type', 'button')
         uvBtn.setAttribute('class', 'btn btn-success btn-sm')
         
-      } else if (uvIndex >=3 && uvIndex <=5) { //yellow
+      } else if (uvIndex >=3 && uvIndex <6) { //yellow
         uvBtn.setAttribute('class', 'btn btn-warning btn-sm')
-      } else if (uvIndex >= 6 && uvIndex <=7) { //orange
+      } else if (uvIndex >= 6 && uvIndex <8) { //orange
+        uvBtn.setAttribute('class', 'btn btn-warning btn-sm')
       } else if (uvIndex >= 8) { //red
         uvBtn.setAttribute('class', 'btn btn-danger btn-sm')
       }
-
+      daily.setAttribute('class', 'daily-box')
       daily.appendChild(newDiv)
 
 
@@ -100,68 +132,60 @@ function getUVIndex(latitude, longitude, city) {
       fiveTitleHolder.appendChild(fiveTitle)
 
       var cardDiv = {}
+      var cardDate = {}
 
       for (var i = 0; i < 5; i++) {
           cardDiv[i] = document.createElement("div")
 
-          cardDiv[i].setAttribute('class', 'bg-primary col-2')
+          cardDiv[i].setAttribute('class', 'bg-primary col-2 ml-3')
 
-          // cardDiv[i].setAttribute("class", "col-2");
+          cardDate[i] = document.createElement("h5")
+          cardDate[i].innerHTML = moment().add(i,'days').format("l")
+          cardDiv[i].appendChild(cardDate[i])
   
-          cardDiv[i].innerHTML = moment().add(i,'days').format("l")
+          const weatherImg = document.createElement("img"); //add back
+          weatherImg.setAttribute('class', 'weather-image')
 
+          weatherImg.src = "https://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png";
+          cardDiv[i].appendChild(weatherImg); //add back
 
-          // const weatherImg = document.createElement("img");
-          // weatherImg.setAttribute('class', 'weather-image')
-          // // imgUrl = 
-          // weatherImg.src = "https://openweathermap.org/img/wn/" + data.weather["0"].icon + "@2x.png";
-          // fiveDay.appendChild(weatherImg);
-
-          // cardDiv.innerHTML += "<i class=&quot;fa fa-trash-o&quot; aria-hidden=&quot;true&quot;></i>"
-          cardDiv[i].innerHTML += "<p>Temp: " + Math.round(data.daily[i].temp.day - 273.15) + " *C</p>"
+          cardDiv[i].innerHTML += "<p>Temp: " + Math.round((data.daily[i].temp.day - 273.15) * (9/5) + 32) + " \xB0F</p>" //ADD BACK
   
-          cardDiv[i].innerHTML += "<p>Wind: " + data.daily[i].wind_speed + " MPH</p>"
+          cardDiv[i].innerHTML += "<p>Wind: " + data.daily[i].wind_speed + " MPH</p>" // ADD BACK
   
-          cardDiv[i].innerHTML += "<p>Humidity: " + data.daily[i].humidity + " %</p>"
+          cardDiv[i].innerHTML += "<p>Humidity: " + data.daily[i].humidity + " %</p>" //ADD BACK
           fiveDay.appendChild(cardDiv[i])
 
       }
-      saveCity(city)
+      saveCity(getFinalCity(city))
     })
 }
 
+//populate the citybuttons list with all city buttons 
 for (i = 0; i < existingEntries.length; i++) {
     existingCity[i] = document.createElement("button")
     existingCity[i].innerHTML = existingEntries[i]
-    // existingCity[i].setAttribute('margin', '2px')
     existingCity[i].setAttribute('class', 'city-button btn btn-secondary btn-block')
-    // existingCity[i].setAttribute('box-sizing', 'border-box')
     existingCity[i].setAttribute('data-searchterm', existingEntries[i])
     cityButtons.appendChild(existingCity[i])
 }
 
-// document.querySelectorAll('.city-button').forEach(function(el) {
-//     el.addEventListener('click', function(event){
-//         cityselection = el.textContent
-//         getApi(cityselection)
-//         console.log("clicked button on page>>>" + el.textContent)
-//     })
-// })
-
+//save the citybutton to the citybuttons list 
 function saveCity(city) {
-  // existingEntries.push(city)
-  
+  city = getFinalCity(city)
     if (!existingEntries.includes(city)) { 
       // console.log("SAVE CITY INPUT VALUE >>>", city)
         existingEntries.push(city)
         localStorage.setItem("allEntries", JSON.stringify(existingEntries));
         var newCityButton = document.createElement("button")
         newCityButton.setAttribute('class','city-button btn btn-secondary btn-block')
+        newCityButton.setAttribute('data-searchterm', city)
         newCityButton.innerHTML = city
         cityButtons.appendChild(newCityButton)
     }
 }
 
+//transforms user input into a value that can be passed to getapi function
 function handleSearchFormSubmit(event) {
   if(!cityInput.value) {
     return;
@@ -173,21 +197,32 @@ function handleSearchFormSubmit(event) {
   cityInput.value = '';
 }
 
+//transforms user's click on the city buttons into a value that can be passed to getapi function
 function handleSearchHistoryClick(event) {
   if (event.target.matches('.city-button')) {
     var button = event.target;
     var searchTerm = button.getAttribute('data-searchterm');
+    console.log(searchTerm)
     getApi(searchTerm);
   }
 }
 
-// searchButton.addEventListener('click', getApi("search"));
+//add event listeners for the respective buttons 
 searchButton.addEventListener('click', handleSearchFormSubmit);
+searchButton.addEventListener('keyup', function(e) {
+  if(e.key === "Enter") {
+    e.preventDefault()
+    handleSearchFormSubmit()
+  }
+})
 cityButtons.addEventListener('click', handleSearchHistoryClick);
 
 
-  //TODO: get the weather icon on the same line
-  //TODO: get spacing in between the icons 
-  //todo: get all the icons in different parts of the script working???
+
+
+  //to do: press enter and have the form submit 
   //q: is data[0] the current day, and then data[1] moving forward? 
   //q: make sure the weather #s are the correct ones 
+  // dashboard does not populate when it is on github, but works fine on live server
+// make layout responsive (flexbox) for mobile applications 
+//make it look more like the mockup

@@ -13,15 +13,16 @@
   integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
   crossorigin="anonymous"
 />
+  <link rel="stylesheet" href="./assets/css/style.css" />
 
   <title>Bootstrap Layouts</title>
 </head>
 
 <body>
   <!-- Page margins are created using the container and container-fluid classes -->
-  <header class="container-fluid bg-dark text-light mb-5 p-3">
+  <header class="container-fluid bg-dark text-light mb-5 p-3 menu-bar">
     <div class="d-flex align-items-center">
-      <h1>Weather Dashboard</h1>
+      <h1><b>Weather Dashboard</b></h1>
       <!-- <h3 class="ml-auto">
         Even this is a layout
       </h3> -->
@@ -41,12 +42,14 @@
         <button type="button" class="btn btn-primary btn-block" id="search-button">Search</button>
         <hr>
         <div id="city-buttons"></div>
+        <hr>
+        <button type="button" class="btn btn-light btn-block" id="clear-button">Clear all cities</button>
       </div>
 
       <div class="col-12 col-md-8 col-xl-9">
         <div id="daily"></div>
         <div id="five-title-holder"></div>
-        <div class="row" id="five-day"></div>
+        <div class="row container-fluid" id="five-day"></div>
       </div>
       <div id="my_dataviz"></div>
     </div>
