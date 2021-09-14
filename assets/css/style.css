@@ -1,0 +1,23 @@
+.city-button {
+  margin: 20px
+} 
+
+button.col-12.city-button.btn.btn-secondary {
+  margin: 2px;
+}
+
+.weather-image {
+  display:inline
+}
+
+#daily {
+  white-space:nowrap
+}
+
+/* .weather-card {
+  background-color: blue;
+} */
+
+.bg-primary {
+  margin: 2px
+}
