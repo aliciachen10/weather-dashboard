@@ -8,7 +8,7 @@ This web application populates a currently selected area's current (including te
 This project showcases usage of HTML/CSS, Javascript, Momentjs, localstorage, and a third-party weather api, OpenWeatherMap. It utilizes the Bootstrap library for styling. 
 
 # mockup
-![weather-dashboard-preview](https://github.com/aliciachen10/weather-dashboard/assets/mockup.png)
+![weather-dashboard-preview](https://github.com/aliciachen10/weather-dashboard/blob/main/assets/mockup.png)
 
 # acknowledgements
 thanks to openweathermap api for providing easily accessible data for this project! 
