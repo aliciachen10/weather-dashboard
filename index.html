@@ -15,26 +15,19 @@
 />
   <link rel="stylesheet" href="./assets/css/style.css" />
 
-  <title>Bootstrap Layouts</title>
+  <title>Weather Dashboard</title>
 </head>
 
 <body>
-  <!-- Page margins are created using the container and container-fluid classes -->
+
   <header class="container-fluid bg-dark text-light mb-5 p-3 menu-bar">
     <div class="d-flex align-items-center">
-      <h1><b>Weather Dashboard</b></h1>
-      <!-- <h3 class="ml-auto">
-        Even this is a layout
-      </h3> -->
+      <h1 style="text-align:center;">Weather Dashboard</h1>
     </div>
   </header>
 
-  <!-- Two column layout -->
   <section class="container my-5">
-    <!-- Use row class to create row in the container -->
     <div class="row">
-      <!-- Use col-* classes for different column sizes on different screens -->
-
 
       <div class="col-12 col-md-4 col-xl-3">
         <h3>Search for a City:</h3>
@@ -46,12 +39,11 @@
         <button type="button" class="btn btn-light btn-block" id="clear-button">Clear all cities</button>
       </div>
 
-      <div class="col-12 col-md-8 col-xl-9">
+      <div class="col-12 col-md-8 col-xl-9" id="main-div">
         <div id="daily"></div>
         <div id="five-title-holder"></div>
-        <div class="row container-fluid" id="five-day"></div>
+        <div class="row d-flex" id="five-day"></div>
       </div>
-      <div id="my_dataviz"></div>
     </div>
   </section>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>

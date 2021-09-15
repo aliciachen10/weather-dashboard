@@ -4,6 +4,7 @@ var daily = document.getElementById('daily')
 var fiveDay = document.getElementById('five-day')
 var fiveTitleHolder = document.getElementById('five-title-holder')
 var cityButtons = document.getElementById('city-buttons')
+var mainDiv = document.getElementById('main-div')
 var apiKey = '462f9e62962cae328d8a6296900b6569';
 
 var longitude;
@@ -18,6 +19,7 @@ var clearBtn = document.getElementById('clear-button')
 clearBtn.addEventListener('click', function(event) {
     localStorage.clear()
     cityButtons.innerHTML = ""
+    mainDiv.innerHTML = ""
 //     for (var i = 0; i < cityButtons.length; i++) {
 //         $(textAreas[i]).val("")
 //     }
@@ -27,15 +29,12 @@ clearBtn.addEventListener('click', function(event) {
 function getFinalCity(city) {
 
   const rawCity = city;
-  console.log("HERE'S THE RAW CITy>>" + rawCity)
   const finalCity = rawCity.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
   return finalCity
 }
 
 //get city info 
 function getApi(city) {
-
-    // console.log(city);
 
     daily.innerHTML = "";
     fiveTitleHolder.innerHTML = "";
@@ -59,12 +58,8 @@ function getApi(city) {
     })
     .then(function (data) {
         // TO DO MAKE THIS ONE FUNCTION THAT THIS CALLS THAT GIVES YOU THE TEXT BOX
-        // console.log(data.weather['0'].icon)
         var newh2 = document.createElement("span");
         var newh3 = document.createElement("h3")
-
-        // const rawCity = city;
-        // const finalCity = rawCity.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
 
         newh3.innerHTML = getFinalCity(city)
         newh3.innerHTML += " (" + moment().format("l") + ")"
@@ -99,7 +94,6 @@ function getUVIndex(latitude, longitude, city) {
         return response.json();
     })
     .then(function (data) {
-      console.log(data)
       uvIndex = data.current.uvi
 
       newDiv.innerHTML += "UV Index: "
@@ -107,11 +101,9 @@ function getUVIndex(latitude, longitude, city) {
       let uvBtn = document.createElement("button");
       uvBtn.innerHTML = uvIndex;
       uvBtn.disabled = true;
-      // uvBtn.setAttribute('disabled')
       newDiv.appendChild(uvBtn);
 
       if (uvIndex <3) { 
-        // uvBtn.setAttribute('type', 'button')
         uvBtn.setAttribute('class', 'btn btn-success btn-sm')
         
       } else if (uvIndex >=3 && uvIndex <6) { //yellow
@@ -137,23 +129,23 @@ function getUVIndex(latitude, longitude, city) {
       for (var i = 0; i < 5; i++) {
           cardDiv[i] = document.createElement("div")
 
-          cardDiv[i].setAttribute('class', 'bg-primary col-2 ml-3')
+          cardDiv[i].setAttribute('class', 'bg-primary card m-2 flex-grow') //ml-3
 
           cardDate[i] = document.createElement("h5")
           cardDate[i].innerHTML = moment().add(i,'days').format("l")
           cardDiv[i].appendChild(cardDate[i])
   
-          const weatherImg = document.createElement("img"); //add back
+          const weatherImg = document.createElement("img"); 
           weatherImg.setAttribute('class', 'weather-image')
 
           weatherImg.src = "https://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png";
-          cardDiv[i].appendChild(weatherImg); //add back
+          cardDiv[i].appendChild(weatherImg); 
 
-          cardDiv[i].innerHTML += "<p>Temp: " + Math.round((data.daily[i].temp.day - 273.15) * (9/5) + 32) + " \xB0F</p>" //ADD BACK
+          cardDiv[i].innerHTML += "<p>Temp: " + Math.round((data.daily[i].temp.day - 273.15) * (9/5) + 32) + " \xB0F</p>"
   
-          cardDiv[i].innerHTML += "<p>Wind: " + data.daily[i].wind_speed + " MPH</p>" // ADD BACK
+          cardDiv[i].innerHTML += "<p>Wind: " + data.daily[i].wind_speed + " MPH</p>" 
   
-          cardDiv[i].innerHTML += "<p>Humidity: " + data.daily[i].humidity + " %</p>" //ADD BACK
+          cardDiv[i].innerHTML += "<p>Humidity: " + data.daily[i].humidity + " %</p>" 
           fiveDay.appendChild(cardDiv[i])
 
       }
@@ -174,7 +166,6 @@ for (i = 0; i < existingEntries.length; i++) {
 function saveCity(city) {
   city = getFinalCity(city)
     if (!existingEntries.includes(city)) { 
-      // console.log("SAVE CITY INPUT VALUE >>>", city)
         existingEntries.push(city)
         localStorage.setItem("allEntries", JSON.stringify(existingEntries));
         var newCityButton = document.createElement("button")
@@ -202,7 +193,6 @@ function handleSearchHistoryClick(event) {
   if (event.target.matches('.city-button')) {
     var button = event.target;
     var searchTerm = button.getAttribute('data-searchterm');
-    console.log(searchTerm)
     getApi(searchTerm);
   }
 }
@@ -223,6 +213,5 @@ cityButtons.addEventListener('click', handleSearchHistoryClick);
   //to do: press enter and have the form submit 
   //q: is data[0] the current day, and then data[1] moving forward? 
   //q: make sure the weather #s are the correct ones 
-  // dashboard does not populate when it is on github, but works fine on live server
-// make layout responsive (flexbox) for mobile applications 
-//make it look more like the mockup
+//make all the cities populate correctly. it populates dynamically but doesn't populate correctly in the for loop, 
+//in the for loop all cities appear
