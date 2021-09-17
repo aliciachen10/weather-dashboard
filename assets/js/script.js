@@ -1,4 +1,5 @@
 var searchButton = document.getElementById('search-button');
+var searchForm = document.getElementById('search-form');
 var cityInput = document.getElementById('city-input');
 var daily = document.getElementById('daily')
 var fiveDay = document.getElementById('five-day')
@@ -198,13 +199,7 @@ function handleSearchHistoryClick(event) {
 }
 
 //add event listeners for the respective buttons 
-searchButton.addEventListener('click', handleSearchFormSubmit);
-searchButton.addEventListener('keyup', function(e) {
-  if(e.key === "Enter") {
-    e.preventDefault()
-    handleSearchFormSubmit()
-  }
-})
+searchForm.addEventListener('submit', handleSearchFormSubmit);
 cityButtons.addEventListener('click', handleSearchHistoryClick);
 
 
@@ -213,5 +208,3 @@ cityButtons.addEventListener('click', handleSearchHistoryClick);
   //to do: press enter and have the form submit 
   //q: is data[0] the current day, and then data[1] moving forward? 
   //q: make sure the weather #s are the correct ones 
-//make all the cities populate correctly. it populates dynamically but doesn't populate correctly in the for loop, 
-//in the for loop all cities appear
