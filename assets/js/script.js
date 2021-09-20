@@ -15,16 +15,19 @@ var newDiv = document.createElement("div") //where is this being used? confirm a
 var existingEntries = JSON.parse(localStorage.getItem("allEntries")) || [];
 var existingCity = []
 
+//bring up array of elements and then just clear the citybuttons (go over array.length)
 //use clear button to clear all local storage and all text areas 
-var clearBtn = document.getElementById('clear-button')
-clearBtn.addEventListener('click', function(event) {
-    localStorage.clear()
-    cityButtons.innerHTML = ""
-    mainDiv.innerHTML = ""
-//     for (var i = 0; i < cityButtons.length; i++) {
-//         $(textAreas[i]).val("")
-//     }
-})
+// var clearBtn = document.getElementById('clear-button')
+// clearBtn.addEventListener('click', function(event) {
+//     localStorage.clear()
+//     cityButtons.innerHTML = ""
+//     // fiveDay.innerHTML = ""
+//     // fiveTitleHolder.innerHTML = ""
+//     // daily.innerHTML = ""
+// //     for (var i = 0; i < cityButtons.length; i++) {
+// //         $(textAreas[i]).val("")
+// //     }
+// })
 
 // convert the user's input into a capitalized string of letters 
 function getFinalCity(city) {
@@ -40,13 +43,6 @@ function getApi(city) {
     daily.innerHTML = "";
     fiveTitleHolder.innerHTML = "";
     fiveDay.innerHTML = "";
-
-    // if (callmethod = 'search') {
-    //     city = cityInput.value
-    // } else {
-    //     city = callmethod
-    //     console.log("logging the city>>>" + city)
-    // }
 
     var requestUrl = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + apiKey
     
@@ -70,7 +66,6 @@ function getApi(city) {
 
         const weatherImg = document.createElement("img");
         weatherImg.setAttribute('class', 'weather-image')
-        // imgUrl = 
         weatherImg.src = "https://openweathermap.org/img/wn/" + data.weather["0"].icon + "@2x.png";
         daily.appendChild(weatherImg);
 
@@ -95,6 +90,7 @@ function getUVIndex(latitude, longitude, city) {
         return response.json();
     })
     .then(function (data) {
+      // console.log(data)
       uvIndex = data.current.uvi
 
       newDiv.innerHTML += "UV Index: "
@@ -133,16 +129,19 @@ function getUVIndex(latitude, longitude, city) {
           cardDiv[i].setAttribute('class', 'bg-primary card m-2 flex-grow') //ml-3
 
           cardDate[i] = document.createElement("h5")
-          cardDate[i].innerHTML = moment().add(i,'days').format("l")
+          // cardDate[i].innerHTML = new Date(data.daily[0].dt*1000)
+          // const moment = require('moment');
+          cardDate[i].innerHTML = moment(data.daily[i].dt*1000).format("l")
           cardDiv[i].appendChild(cardDate[i])
   
           const weatherImg = document.createElement("img"); 
           weatherImg.setAttribute('class', 'weather-image')
-
           weatherImg.src = "https://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png";
           cardDiv[i].appendChild(weatherImg); 
 
-          cardDiv[i].innerHTML += "<p>Temp: " + Math.round((data.daily[i].temp.day - 273.15) * (9/5) + 32) + " \xB0F</p>"
+          cardDiv[i].innerHTML += "<p>High: " + Math.round((data.daily[i].temp.max - 273.15) * (9/5) + 32) + " \xB0F</p>"
+
+          cardDiv[i].innerHTML += "<p>Low: " + Math.round((data.daily[i].temp.min - 273.15) * (9/5) + 32) + " \xB0F</p>"
   
           cardDiv[i].innerHTML += "<p>Wind: " + data.daily[i].wind_speed + " MPH</p>" 
   
@@ -202,9 +201,4 @@ function handleSearchHistoryClick(event) {
 searchForm.addEventListener('submit', handleSearchFormSubmit);
 cityButtons.addEventListener('click', handleSearchHistoryClick);
 
-
-
-
-  //to do: press enter and have the form submit 
-  //q: is data[0] the current day, and then data[1] moving forward? 
-  //q: make sure the weather #s are the correct ones 
+//next: add a clear all cities button
